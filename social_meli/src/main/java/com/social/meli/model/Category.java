@@ -18,6 +18,9 @@ public class Category {
         private String name;
 
         @Column(nullable = false)
+        private String description;
+
+        @Column(nullable = false)
         private Boolean active = true;
 
         @OneToMany(mappedBy = "category")

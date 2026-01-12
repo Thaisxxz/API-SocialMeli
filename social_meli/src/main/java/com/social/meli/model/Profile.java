@@ -27,7 +27,4 @@ public class Profile {
     @ManyToOne
     @JoinColumn(name= "user_id", nullable = false)
     private User user;
-
-    @OneToMany(mappedBy = "profile")
-    private List<ProductProfile> productProfiles;
 }

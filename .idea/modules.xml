@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/API-SocialMeli.iml" filepath="$PROJECT_DIR$/.idea/API-SocialMeli.iml" />
+      <module fileurl="file://$PROJECT_DIR$/social_meli/social_meli.iml" filepath="$PROJECT_DIR$/social_meli/social_meli.iml" />
     </modules>
   </component>
 </project>

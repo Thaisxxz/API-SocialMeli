@@ -26,6 +26,11 @@ public class Follower {
     private Profile seller;
 
     @Column(nullable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime followedAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.followedAt = LocalDateTime.now();
+    }
 
 }

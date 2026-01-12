@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public interface ProfileRepository extends JpaRepository<Profile,Long> {
 
-    List<Profile> findByUser_Id(Long userId);
+    List<Profile> findByUserId(Long userId);
 
     List<Profile> findByType(ProfileType type);
 
     List<Profile> findByActiveTrue();
 
-    Optional<Profile> findByIdAndActiveTrue(Long id);
+//    Optional<Profile> findByIdAndActiveTrue(Long id);
 }

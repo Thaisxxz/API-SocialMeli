@@ -41,7 +41,7 @@ public class UserService {
         user.setName(userCreateDTO.getName());
 
         User saved = userRepository.save(user);
-        return UserResponseDTO.fromEntity(user);
+        return UserResponseDTO.fromEntity(saved);
     }
 
 public UserResponseDTO findById(Long id) {
@@ -69,7 +69,6 @@ public UserResponseDTO findById(Long id) {
                 .map(UserResponseDTO::fromEntity)
                 .toList();
         return userResponseDTOList;
-        
  }
 }
 
