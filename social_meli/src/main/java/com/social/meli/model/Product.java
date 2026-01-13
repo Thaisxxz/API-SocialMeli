@@ -32,10 +32,11 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean active = true;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne

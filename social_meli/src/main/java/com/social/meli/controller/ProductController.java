@@ -1,5 +1,6 @@
 package com.social.meli.controller;
 
+import com.social.meli.controller.docs.ProductControllerDocs;
 import com.social.meli.dto.product.CreateProductDTO;
 import com.social.meli.dto.product.ProductResponseDTO;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
-public class ProductController {
+public class ProductController implements ProductControllerDocs {
     private final ProductService productService;
 
     @PostMapping

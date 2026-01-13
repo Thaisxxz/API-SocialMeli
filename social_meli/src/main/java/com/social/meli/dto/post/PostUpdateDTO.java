@@ -13,4 +13,6 @@ public class PostUpdateDTO {
     private String title;
     private String description;
     private BigDecimal discount;
+    private String imageUrl;
+    private Boolean isPromo;
 }

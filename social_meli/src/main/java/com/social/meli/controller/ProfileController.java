@@ -1,6 +1,7 @@
 package com.social.meli.controller;
 
 import com.social.meli.ENUM.ProfileType;
+import com.social.meli.controller.docs.ProfileControllerDocs;
 import com.social.meli.dto.profile.CreateProfileDTO;
 import com.social.meli.dto.profile.ProfileResponseDTO;
 import com.social.meli.service.ProfileService;
@@ -13,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/profiles")
-public class ProfileController {
+public class ProfileController implements ProfileControllerDocs {
     private final ProfileService profileService;
 
     @PostMapping

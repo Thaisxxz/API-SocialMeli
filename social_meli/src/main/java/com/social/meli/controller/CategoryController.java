@@ -1,5 +1,6 @@
 package com.social.meli.controller;
 
+import com.social.meli.controller.docs.CategoryControllerDocs;
 import com.social.meli.dto.product.category.CategoryResponseDTO;
 import com.social.meli.dto.product.category.CreateCategoryDTO;
 import com.social.meli.service.CategoryService;
@@ -12,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-public class CategoryController {
+public class CategoryController implements CategoryControllerDocs {
     private final CategoryService categoryService;
 
     @PostMapping

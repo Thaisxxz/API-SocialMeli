@@ -2,6 +2,7 @@ package com.social.meli.service;
 
 import com.social.meli.dto.post.PostCreateDTO;
 import com.social.meli.dto.post.PostResponseDTO;
+import com.social.meli.dto.post.PostUpdateDTO;
 import com.social.meli.exception.post.PostNotFoundException;
 import com.social.meli.exception.product.ProductNotFoundException;
 import com.social.meli.exception.profile.ProfileNotFoundException;
@@ -21,8 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static java.util.Arrays.stream;
 
 @Service
 @RequiredArgsConstructor
@@ -57,9 +56,7 @@ public class PostService {
         Profile postProfile = getProfileOrThrow(postCreateDTO.getProfileId());
         assertIsSeller(postProfile);
 
-        Product postProduct = Optional.ofNullable(postCreateDTO.getProductId())
-                .flatMap(productRepository::findById)
-                .orElse(null);
+        Product postProduct = getProductOrThrow(postCreateDTO.getProductId());
         Post post = Post.builder()
                 .title(postCreateDTO.getTitle())
                 .description(postCreateDTO.getDescription())
@@ -94,6 +91,17 @@ public class PostService {
                 .map(PostResponseDTO::fromEntity)
                 .toList();
     }
+    public PostResponseDTO updatePost(UUID id, PostUpdateDTO postUpdateDTO) {
+        Post post = getPostOrThrow(id);
+        Optional.ofNullable(postUpdateDTO.getTitle()).ifPresent(post::setTitle);
+        Optional.ofNullable(postUpdateDTO.getDescription()).ifPresent(post::setDescription);
+        Optional.ofNullable(postUpdateDTO.getDiscount()).ifPresent(post::setDiscount);
+        Optional.ofNullable(postUpdateDTO.getImageUrl()).ifPresent(post::setImageUrl);
+        Optional.ofNullable(postUpdateDTO.getIsPromo()).ifPresent(post::setIsPromo);
+
+        post = postRepository.save(post);
+        return PostResponseDTO.fromEntity(post);
+    }
 
     public List<PostResponseDTO> timeline(Long buyerprofileId) {
         List<Profile> sellers = followerRepository.findByFollower_Id(buyerprofileId)
@@ -107,6 +115,16 @@ public class PostService {
                 .stream()
                 .map(PostResponseDTO::fromEntity)
                 .toList();
+    }
+    public void deletePost(UUID id) {
+        Post post = getPostOrThrow(id);
+        postRepository.delete(post);
+    }
+
+    public void inactivatePost(UUID id) {
+        Post post = getPostOrThrow(id);
+        post.setIsPromo(false);
+        postRepository.save(post);
     }
 }
 

@@ -13,6 +13,5 @@ public interface PostRepository extends JpaRepository<Post, UUID> {
 
     List<Post> findAllByProfileOrderByCreatedPostAtDesc(Profile profile);
     List<Post> findByProfileInAndCreatedPostAtAfterOrderByCreatedPostAtDesc(List<Profile> profiles, LocalDateTime date);
-
     List<Post> findByProfileAndIsPromoTrueOrderByCreatedPostAtDesc(Profile profile);
 }
