@@ -5,11 +5,10 @@ import com.social.meli.model.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ProfileRepository extends JpaRepository<Profile,Long> {
 
-    List<Profile> findByUserId(Long userId);
+    List<Profile> findByUserId(Long user_Id);
 
     List<Profile> findByType(ProfileType type);
 

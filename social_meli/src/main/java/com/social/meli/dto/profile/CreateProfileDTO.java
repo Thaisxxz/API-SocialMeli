@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class CreateProfileDTO {
     private ProfileType type;
-    private Long  userId;
+    private Long  user_Id;
 }

@@ -23,8 +23,8 @@ public class ProfileController implements ProfileControllerDocs {
         return ResponseEntity.status(201).body(profileResponseDTO);
     }
     @GetMapping("user/{user_id}")
-    public ResponseEntity<List<ProfileResponseDTO>> listByUser(@PathVariable Long userId) {
-        List<ProfileResponseDTO> list = profileService.findByUserId(userId);
+    public ResponseEntity<List<ProfileResponseDTO>> listByUser(@PathVariable Long user_id) {
+        List<ProfileResponseDTO> list = profileService.findByUserId(user_id);
         return ResponseEntity.ok(list);
     }
     @GetMapping("/type/{type}")
