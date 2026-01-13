@@ -16,7 +16,6 @@ public class Follower {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @ManyToOne
     @JoinColumn (name="follower_id", nullable = false)
     private Profile follower;
@@ -32,5 +31,4 @@ public class Follower {
     public void prePersist() {
         this.followedAt = LocalDateTime.now();
     }
-
 }

@@ -6,8 +6,7 @@ import com.social.meli.dto.profile.ProfileResponseDTO;
 import com.social.meli.exception.profile.ProfileNotFoundException;
 import com.social.meli.model.Profile;
 import com.social.meli.model.User;
-import com.social.meli.permission.profile.ProfilePermission;
-import com.social.meli.permission.profile.ProfilePermissionFactory;
+
 import com.social.meli.repository.ProfileRepository;
 import com.social.meli.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +19,11 @@ import java.util.List;
 public class ProfileService {
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
-    private final ProfilePermissionFactory profilePermissionFactory;
-
 
     public ProfileResponseDTO createProfile(CreateProfileDTO createProfileDTO) {
-        User user = userRepository.findById(createProfileDTO.getUserId())
+        User user = userRepository.findById(createProfileDTO.getUser_Id())
                 .orElseThrow(() -> new ProfileNotFoundException("Usuário não encontrado"));
         ProfileType type = createProfileDTO.getType();
-        ProfilePermission permission = profilePermissionFactory.getProfile(type);
 
         Profile profile = new Profile();
         profile.setUser(user);

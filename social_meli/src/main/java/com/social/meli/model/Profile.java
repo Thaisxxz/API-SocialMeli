@@ -3,9 +3,6 @@ import com.social.meli.ENUM.ProfileType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
-
 @Entity
 @Data
 @NoArgsConstructor
