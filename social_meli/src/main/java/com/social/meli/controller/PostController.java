@@ -31,18 +31,18 @@ public class PostController implements PostControllerDocs {
     }
 
     @GetMapping("/profile/{profileId}")
-    public ResponseEntity<List<PostResponseDTO>> findAllByProfile(@PathVariable Long profileId) {
-        return ResponseEntity.ok(postService.findAllByProfile(profileId));
+    public ResponseEntity<List<PostResponseDTO>> findAllByProfile(@PathVariable Long profileId, @RequestParam (required = false) String order) {
+        return ResponseEntity.ok(postService.findAllByProfile(profileId, order));
     }
 
     @GetMapping("profile/{profileId}/promo")
-    public ResponseEntity<List<PostResponseDTO>> findAllByPromo(@PathVariable Long profileId) {
-        return ResponseEntity.ok(postService.findAllByIsPromo(profileId));
+    public ResponseEntity<List<PostResponseDTO>> findAllByPromo(@PathVariable Long profileId,@RequestParam (required = false) String order) {
+        return ResponseEntity.ok(postService.findAllByIsPromo(profileId,order));
     }
 
     @GetMapping("/timeline/{buyerProfileId}")
-    public ResponseEntity<List<PostResponseDTO>> findAllByTimeLine(@PathVariable Long buyerProfileId) {
-        return ResponseEntity.ok(postService.timeline(buyerProfileId));
+    public ResponseEntity<List<PostResponseDTO>> findAllByTimeLine(@PathVariable Long buyerProfileId, @RequestParam(required = false) String order) {
+        return ResponseEntity.ok(postService.timeline(buyerProfileId, order));
     }
 
     @PutMapping("/update/{id}")

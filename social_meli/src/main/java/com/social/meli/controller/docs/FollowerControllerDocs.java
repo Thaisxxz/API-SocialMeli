@@ -76,7 +76,10 @@ public interface FollowerControllerDocs {
     @GetMapping("/{sellerProfileId}/followers")
     ResponseEntity<List<FollowerResponseDTO>> listFollowers(
             @Parameter(description = "ID do perfil do vendedor", required = true)
-            @PathVariable Long sellerProfileId
+            @PathVariable Long sellerProfileId,
+
+             @Parameter(description = "Ordenação: name_asc, name_desc")
+             @RequestParam(required = false) String order
     );
 
     @Operation(summary = "Listar todos os vendedores que um comprador está seguindo")
@@ -86,6 +89,9 @@ public interface FollowerControllerDocs {
     @GetMapping("/{buyerProfileId}/following")
     ResponseEntity<List<FollowerResponseDTO>> listFollowing(
             @Parameter(description = "ID do perfil do comprador", required = true)
-            @PathVariable Long buyerProfileId
+            @PathVariable Long buyerProfileId,
+
+            @Parameter(description = "Ordenação: name_asc, name_desc")
+            @RequestParam(required = false) String order
     );
 }

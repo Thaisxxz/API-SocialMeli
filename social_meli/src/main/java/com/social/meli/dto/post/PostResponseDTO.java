@@ -29,25 +29,25 @@ public class PostResponseDTO {
     private Long productId;
     private String productName;
 
-    public static PostResponseDTO fromEntity(Post post) {
+    public static PostResponseDTO fromEntity(Post postDocument) {
         return new PostResponseDTO(
-                post.getId(),
-                post.getTitle(),
-                post.getDescription(),
-                post.getCreatedPostAt(),
-                Optional.ofNullable(post.getProfile())
+                postDocument.getId(),
+                postDocument.getTitle(),
+                postDocument.getDescription(),
+                postDocument.getCreatedPostAt(),
+                Optional.ofNullable(postDocument.getProfile())
                         .map(Profile::getId)
                         .orElse(null),
-                Optional.ofNullable(post.getProfile())
+                Optional.ofNullable(postDocument.getProfile())
                         .map(profile -> profile.getUser() != null ? profile.getUser().getName() : null)
                         .orElse(null),
-                post.getIsPromo(),
-                post.getDiscount(),
-                post.getImageUrl(),
-                Optional.ofNullable(post.getProduct())
+                postDocument.getIsPromo(),
+                postDocument.getDiscount(),
+                postDocument.getImageUrl(),
+                Optional.ofNullable(postDocument.getProduct())
                         .map(Product::getId)
                         .orElse(null),
-                Optional.ofNullable(post.getProduct())
+                Optional.ofNullable(postDocument.getProduct())
                         .map(Product::getName)
                         .orElse(null));
     }

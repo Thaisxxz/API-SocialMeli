@@ -20,6 +20,8 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private Long sellerUserId;
+
     @Column(nullable = false)
     private String title;
 
@@ -38,6 +40,7 @@ public class Post {
     private LocalDateTime createdPostAt;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean isPromo= false;
 
     @Column

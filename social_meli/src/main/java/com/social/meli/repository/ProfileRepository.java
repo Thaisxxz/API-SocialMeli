@@ -13,6 +13,4 @@ public interface ProfileRepository extends JpaRepository<Profile,Long> {
     List<Profile> findByType(ProfileType type);
 
     List<Profile> findByActiveTrue();
-
-//    Optional<Profile> findByIdAndActiveTrue(Long id);
 }

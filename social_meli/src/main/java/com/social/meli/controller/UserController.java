@@ -5,6 +5,7 @@ import com.social.meli.dto.user.LoginDTO;
 import com.social.meli.dto.user.UserCreateDTO;
 import com.social.meli.dto.user.UserResponseDTO;
 import com.social.meli.service.UserService;
+import jakarta.validation.Valid;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class UserController implements UserControllerDocs {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserCreateDTO userCreateDTO) {
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         UserResponseDTO userResponseDTO = userService.createUser(userCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDTO);
     }
@@ -31,7 +32,7 @@ public class UserController implements UserControllerDocs {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody LoginDTO loginDTO) {
         UserResponseDTO userResponseDTO= userService.login(loginDTO);
         return ResponseEntity.ok(userResponseDTO);
     }

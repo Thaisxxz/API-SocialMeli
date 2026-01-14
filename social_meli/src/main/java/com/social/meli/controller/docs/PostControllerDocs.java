@@ -42,7 +42,8 @@ public interface PostControllerDocs {
     @GetMapping("/profile/{profileId}")
     ResponseEntity<List<PostResponseDTO>> findAllByProfile(
             @Parameter(description = "ID do perfil", required = true)
-            @PathVariable Long profileId
+            @PathVariable Long profileId,
+            @RequestParam(required=false) String order
     );
 
     @Operation(summary = "Lista todos os posts promocionais de um perfil")
@@ -51,7 +52,9 @@ public interface PostControllerDocs {
     @GetMapping("/profile/{profileId}/promo")
     ResponseEntity<List<PostResponseDTO>> findAllByPromo(
             @Parameter(description = "ID do perfil", required = true)
-            @PathVariable Long profileId
+            @PathVariable Long profileId,
+            @RequestParam(required=false) String order
+
     );
 
     @Operation(summary = "Lista a timeline de um comprador")
@@ -60,7 +63,8 @@ public interface PostControllerDocs {
     @GetMapping("/timeline/{buyerProfileId}")
     ResponseEntity<List<PostResponseDTO>> findAllByTimeLine(
             @Parameter(description = "ID do comprador", required = true)
-            @PathVariable Long buyerProfileId
+            @PathVariable Long buyerProfileId,
+            @RequestParam(required = false) String order
     );
 
     @Operation(summary = "Atualiza um post existente")

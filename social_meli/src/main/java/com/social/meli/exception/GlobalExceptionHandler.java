@@ -3,6 +3,7 @@ package com.social.meli.exception;
 import com.social.meli.exception.follower.BusinessException;
 import com.social.meli.exception.follower.FollowerNotFoundException;
 import com.social.meli.exception.follower.UnauthorizedException;
+import com.social.meli.exception.order.InvalidOrderException;
 import com.social.meli.exception.post.PostNotFoundException;
 import com.social.meli.exception.product.ProductNotFoundException;
 import com.social.meli.exception.product.category.CategoryNotFoundException;
@@ -88,5 +89,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handlePostNotFound(PostNotFoundException postEx){
         return postEx.getMessage();
+    }
+
+    @ExceptionHandler(InvalidOrderException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleInvalidOrder(InvalidOrderException ex) {
+        return ex.getMessage();
     }
 }

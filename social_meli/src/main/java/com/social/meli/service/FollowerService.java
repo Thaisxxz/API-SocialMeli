@@ -3,6 +3,7 @@ package com.social.meli.service;
 import com.social.meli.dto.follower.FollowerResponseDTO;
 import com.social.meli.exception.follower.BusinessException;
 import com.social.meli.exception.follower.FollowerNotFoundException;
+import com.social.meli.exception.order.InvalidOrderException;
 import com.social.meli.exception.profile.ProfileNotFoundException;
 import com.social.meli.model.Follower;
 import com.social.meli.model.Profile;
@@ -13,7 +14,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +25,7 @@ public class FollowerService {
     private final FollowerRepository followerRepository;
     private final ProfileRepository profileRepository;
     private final ProfilePermissionFactory profilePermissionFactory;
-
+    private static final Set<String> NAME_ORDERS = Set.of("name_asc", "name_desc");
 
     // Métodos auxiliares (privados)
     private Profile getProfileOrThrow(Long profileId) {
@@ -71,16 +75,42 @@ public class FollowerService {
         followerRepository.deleteByFollower_IdAndSeller_Id(buyerProfileId, sellerProfileId);
     }
 
-    public List<FollowerResponseDTO> listFollowers(Long sellerProfileId) {
-        List<Follower> followers = followerRepository.findBySeller_Id(sellerProfileId);
+    private void validateNameOrder(String order) {
+        if (order == null) return;
+
+        if (!order.equalsIgnoreCase("name_asc") && !order.equalsIgnoreCase("name_desc")) {
+            throw new InvalidOrderException("Order inválido: " + order + ". Use name_asc ou name_desc.");
+        }
+    }
+
+    public List<FollowerResponseDTO> listFollowers(Long sellerProfileId, String order) {
+        validateNameOrder(order);
+        List<Follower> followers = followerRepository.findBySeller_Id(sellerProfileId,order);
+
+        Comparator<Follower> byNickname =
+                Comparator.comparing(f -> f.getFollower().getUser().getNickname(), String.CASE_INSENSITIVE_ORDER);
+
+        Comparator<Follower> finalComparator =
+                "name_desc".equalsIgnoreCase(order) ? byNickname.reversed() : byNickname; // default asc
+
         return followers.stream()
+                .sorted(finalComparator)
                 .map(FollowerResponseDTO::fromEntity)
                 .toList();
     }
 
-    public List<FollowerResponseDTO> listFollowing(Long buyerProfileId) {
-        List<Follower> following = followerRepository.findByFollower_Id(buyerProfileId);
+    public List<FollowerResponseDTO> listFollowing(Long buyerProfileId, String order) {
+        validateNameOrder(order);
+        List<Follower> following = followerRepository.findByFollower_Id(buyerProfileId,order);
+
+        Comparator<Follower> byNickname =
+                Comparator.comparing(f -> f.getSeller().getUser().getNickname(), String.CASE_INSENSITIVE_ORDER);
+
+        Comparator<Follower> finalComparator =
+                "name_desc".equalsIgnoreCase(order) ? byNickname.reversed() : byNickname; // default asc
+
         return following.stream()
+                .sorted(finalComparator)
                 .map(FollowerResponseDTO::fromEntity)
                 .toList();
     }

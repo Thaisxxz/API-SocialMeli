@@ -3,6 +3,7 @@ package com.social.meli.service;
 import com.social.meli.dto.post.PostCreateDTO;
 import com.social.meli.dto.post.PostResponseDTO;
 import com.social.meli.dto.post.PostUpdateDTO;
+import com.social.meli.exception.order.InvalidOrderException;
 import com.social.meli.exception.post.PostNotFoundException;
 import com.social.meli.exception.product.ProductNotFoundException;
 import com.social.meli.exception.profile.ProfileNotFoundException;
@@ -16,11 +17,13 @@ import com.social.meli.repository.PostRepository;
 import com.social.meli.repository.ProductRepository;
 import com.social.meli.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -31,6 +34,8 @@ public class PostService {
     private final ProductRepository productRepository;
     private final ProfilePermissionFactory profilePermissionFactory;
     private final FollowerRepository followerRepository;
+    private static final Set<String> DATE_ORDERS = Set.of("name_asc", "name_desc");
+
 
     private Profile getProfileOrThrow(Long profileId) {
         return profileRepository.findById(profileId)
@@ -51,13 +56,18 @@ public class PostService {
         return postRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException("Post não encontrado, ou excluído."));
     }
-
+    private void validateDateOrder(String order) {
+        if (order == null) return;
+        if (!order.equalsIgnoreCase("date_asc") && !order.equalsIgnoreCase("date_desc")) {
+            throw new InvalidOrderException("Order inválido: " + order + ". Use date_asc ou date_desc.");
+        }
+    }
     public PostResponseDTO postCreate(PostCreateDTO postCreateDTO) {
         Profile postProfile = getProfileOrThrow(postCreateDTO.getProfileId());
         assertIsSeller(postProfile);
 
         Product postProduct = getProductOrThrow(postCreateDTO.getProductId());
-        Post post = Post.builder()
+        Post postDocument = Post.builder()
                 .title(postCreateDTO.getTitle())
                 .description(postCreateDTO.getDescription())
                 .profile(postProfile)
@@ -67,64 +77,78 @@ public class PostService {
                 .product(postProduct)
                 .build();
 
-        post = postRepository.save(post);
-        return PostResponseDTO.fromEntity(post);
+        postDocument = postRepository.save(postDocument);
+        return PostResponseDTO.fromEntity(postDocument);
     }
 
     public PostResponseDTO findPostById(UUID id) {
-        Post post = getPostOrThrow(id);
-        return PostResponseDTO.fromEntity(post);
+        Post postDocument = getPostOrThrow(id);
+        return PostResponseDTO.fromEntity(postDocument);
     }
 
-    public List<PostResponseDTO> findAllByProfile(Long profileId) {
+    public List<PostResponseDTO> findAllByProfile(Long profileId, String order) {
         Profile profile = getProfileOrThrow(profileId);
-        return postRepository.findAllByProfileOrderByCreatedPostAtDesc(profile)
+        validateDateOrder(order);
+
+        Sort base = Sort.by("createdPostAt");
+        Sort sort = "date_asc".equalsIgnoreCase(order) ? base.ascending() : base.descending();
+
+        return postRepository.findByProfile(profile,sort)
                 .stream()
                 .map(PostResponseDTO::fromEntity)
                 .toList();
     }
 
-    public List<PostResponseDTO> findAllByIsPromo(Long profileId) {
+    public List<PostResponseDTO> findAllByIsPromo(Long profileId,String order) {
         Profile profile = getProfileOrThrow(profileId);
-        return postRepository.findByProfileAndIsPromoTrueOrderByCreatedPostAtDesc(profile)
+        validateDateOrder(order);
+        Sort base = Sort.by("createdPostAt");
+        Sort sort = "date_asc".equalsIgnoreCase(order) ? base.ascending() : base.descending();
+
+        return postRepository.findByProfileAndIsPromoTrue(profile,sort)
                 .stream()
                 .map(PostResponseDTO::fromEntity)
                 .toList();
     }
+
     public PostResponseDTO updatePost(UUID id, PostUpdateDTO postUpdateDTO) {
-        Post post = getPostOrThrow(id);
-        Optional.ofNullable(postUpdateDTO.getTitle()).ifPresent(post::setTitle);
-        Optional.ofNullable(postUpdateDTO.getDescription()).ifPresent(post::setDescription);
-        Optional.ofNullable(postUpdateDTO.getDiscount()).ifPresent(post::setDiscount);
-        Optional.ofNullable(postUpdateDTO.getImageUrl()).ifPresent(post::setImageUrl);
-        Optional.ofNullable(postUpdateDTO.getIsPromo()).ifPresent(post::setIsPromo);
+        Post postDocument = getPostOrThrow(id);
+        Optional.ofNullable(postUpdateDTO.getTitle()).ifPresent(postDocument::setTitle);
+        Optional.ofNullable(postUpdateDTO.getDescription()).ifPresent(postDocument::setDescription);
+        Optional.ofNullable(postUpdateDTO.getDiscount()).ifPresent(postDocument::setDiscount);
+        Optional.ofNullable(postUpdateDTO.getImageUrl()).ifPresent(postDocument::setImageUrl);
+        Optional.ofNullable(postUpdateDTO.getIsPromo()).ifPresent(postDocument::setIsPromo);
 
-        post = postRepository.save(post);
-        return PostResponseDTO.fromEntity(post);
+        postDocument = postRepository.save(postDocument);
+        return PostResponseDTO.fromEntity(postDocument);
     }
 
-    public List<PostResponseDTO> timeline(Long buyerprofileId) {
-        List<Profile> sellers = followerRepository.findByFollower_Id(buyerprofileId)
+    public List<PostResponseDTO> timeline(Long buyerProfileId,String order) {
+        validateDateOrder(order);
+        List<Profile> sellers = followerRepository.findByFollower_Id(buyerProfileId,order)
                 .stream()
                 .map(Follower::getSeller)
                 .toList();
 
         LocalDateTime dateMax = LocalDateTime.now().minusWeeks(2);
 
-        return postRepository.findByProfileInAndCreatedPostAtAfterOrderByCreatedPostAtDesc(sellers, dateMax)
+        Sort sort = Sort.by("createdPostAt");
+        Sort finalSort = "date_asc".equalsIgnoreCase(order) ? sort.ascending() : sort.descending();
+
+        return postRepository.findByProfileInAndCreatedPostAtAfter(sellers, dateMax, finalSort)
                 .stream()
                 .map(PostResponseDTO::fromEntity)
                 .toList();
     }
     public void deletePost(UUID id) {
-        Post post = getPostOrThrow(id);
-        postRepository.delete(post);
+        Post postDocument = getPostOrThrow(id);
+        postRepository.delete(postDocument);
     }
 
     public void inactivatePost(UUID id) {
-        Post post = getPostOrThrow(id);
-        post.setIsPromo(false);
-        postRepository.save(post);
+        Post postDocument = getPostOrThrow(id);
+        postDocument.setIsPromo(false);
+        postRepository.save(postDocument);
     }
 }
 

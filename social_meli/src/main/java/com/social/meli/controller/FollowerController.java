@@ -45,11 +45,13 @@ public class FollowerController implements FollowerControllerDocs {
         return ResponseEntity.noContent().build();
     }
     @GetMapping("/{sellerProfileId}/followers")
-    public ResponseEntity<List<FollowerResponseDTO>> listFollowers(@PathVariable Long sellerProfileId) {
-        return ResponseEntity.ok(followerService.listFollowers(sellerProfileId));
+    public ResponseEntity<List<FollowerResponseDTO>> listFollowers(@PathVariable Long sellerProfileId, @RequestParam(required = false) String order
+    ) {
+        return ResponseEntity.ok(followerService.listFollowers(sellerProfileId,order));
     }
     @GetMapping("/{buyerProfileId}/following")
-    public ResponseEntity<List<FollowerResponseDTO>> listFollowing(@PathVariable Long buyerProfileId) {
-        return ResponseEntity.ok(followerService.listFollowing(buyerProfileId));
+    public ResponseEntity<List<FollowerResponseDTO>> listFollowing(@PathVariable Long buyerProfileId,@RequestParam(required = false) String order
+    ) {
+        return ResponseEntity.ok(followerService.listFollowing(buyerProfileId,order));
     }
 }

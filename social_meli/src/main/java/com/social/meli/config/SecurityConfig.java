@@ -1,4 +1,4 @@
-package com.social.meli.security;
+package com.social.meli.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

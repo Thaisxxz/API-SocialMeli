@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(
+        uniqueConstraints = @UniqueConstraint(name="uk_follower_seller", columnNames={"follower_id","seller_id"}))
 public class Follower {
 
     @Id
@@ -24,7 +26,7 @@ public class Follower {
     @JoinColumn (name="seller_id", nullable = false)
     private Profile seller;
 
-    @Column(nullable = false)
+    @Column(name = "followed_at", nullable = false)
     private LocalDateTime followedAt;
 
     @PrePersist
